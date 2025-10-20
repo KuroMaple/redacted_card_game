@@ -1,2 +1,2 @@
 # redacted_card_game
-A card gane made with Flutter
+A card game made with Flutter
