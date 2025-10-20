@@ -19,11 +19,11 @@ class CardcontainerWidget extends StatefulWidget {
 class _CardcontainerWidgetState extends State<CardcontainerWidget> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        ...List.generate(widget.gameState.length, (row) {
-          return FittedBox(
-            child: Row(
+    return FittedBox(
+      child: Column(
+        children: [
+          ...List.generate(widget.gameState.length, (row) {
+            return Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(widget.gameState[row].length, (col) {
                 return Padding(
@@ -37,10 +37,10 @@ class _CardcontainerWidgetState extends State<CardcontainerWidget> {
                       : PlaceholdercardWidget(),
                 );
               }),
-            ),
-          );
-        }),
-      ],
+            );
+          }),
+        ],
+      ),
     );
   }
 }

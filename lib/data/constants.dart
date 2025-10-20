@@ -7,4 +7,8 @@ class KTextStyle {
     letterSpacing: 15.0,
     fontWeight: FontWeight.bold
   );
+  static const TextStyle playerNameText = TextStyle(
+    fontSize: 30.0,
+    fontWeight: FontWeight.bold
+  );
 }

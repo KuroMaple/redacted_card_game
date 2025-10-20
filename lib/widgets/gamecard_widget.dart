@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 class GamecardWidget extends StatelessWidget {
@@ -17,10 +19,43 @@ class GamecardWidget extends StatelessWidget {
         cardTappedCallback(rowIdx, colIdx);
       },
       child: Ink.image(
-        image: const AssetImage('assets/images/1-D.png'),
+        image: AssetImage('assets/images/DarkCards/${getRandomCardName()}.png'),
         height: 100,
         width: 75,
       ),
     );
+  }
+  
+  String getRandomCardName(){
+    String res = '';
+
+    Random random = Random();
+    int min = 1;
+    int max = 18;
+    int cardNumber = random.nextInt(max - min) + min;
+
+    if(cardNumber == 18){
+      res += 'K';
+    }
+    else if(cardNumber == 17){
+      res += 'Q';
+    }
+    else if(cardNumber == 16){
+      res += 'J';
+    }
+    else if(cardNumber == 15){
+      res += 'A';
+    }
+    else {
+      res += cardNumber.toString();
+    }
+
+    res += '-';
+
+    List<String> houses = ['C', 'D', 'H', 'P']; 
+    int houseNumber = random.nextInt(3 - 0) + 0;
+    res += houses[houseNumber];
+    print("Res is: " + res);
+    return res;
   }
 }
