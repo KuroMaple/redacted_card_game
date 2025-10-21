@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-class GamecardWidget extends StatelessWidget {
+class GamecardWidget extends StatefulWidget {
   const GamecardWidget({
     super.key,
     required this.rowIdx,
@@ -12,20 +12,12 @@ class GamecardWidget extends StatelessWidget {
 
   final int rowIdx, colIdx;
   final Function(int, int) cardTappedCallback;
+
   @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        cardTappedCallback(rowIdx, colIdx);
-      },
-      child: Ink.image(
-        image: AssetImage('assets/images/DarkCards/${getRandomCardName()}.png'),
-        height: 100,
-        width: 75,
-      ),
-    );
-  }
-  
+  State<GamecardWidget> createState() => _GamecardWidgetState();
+}
+
+class _GamecardWidgetState extends State<GamecardWidget> {
   String getRandomCardName(){
     String res = '';
 
@@ -55,7 +47,28 @@ class GamecardWidget extends StatelessWidget {
     List<String> houses = ['C', 'D', 'H', 'P']; 
     int houseNumber = random.nextInt(3 - 0) + 0;
     res += houses[houseNumber];
-    print("Res is: " + res);
     return res;
   }
+  late String cardName;
+
+  @override
+  void initState() {
+    super.initState();
+    cardName = getRandomCardName();
+  }
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        widget.cardTappedCallback(widget.rowIdx, widget.colIdx);
+      },
+      child: Ink.image(
+        image: AssetImage('assets/images/DarkCards/$cardName.png'),
+        height: 100,
+        width: 75,
+      ),
+    );
+  }
+
+  
 }

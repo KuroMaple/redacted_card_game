@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:redacted_card_game/pages/game_page.dart';
 import 'package:redacted_card_game/widgets/gamecard_widget.dart';
 import 'package:redacted_card_game/widgets/placeholdercard_widget.dart';
 
@@ -10,7 +11,7 @@ class CardcontainerWidget extends StatefulWidget {
   });
 
   final Function(int, int) cardTappedCallback;
-  final List<List<bool>> gameState;
+  final List<List<CardState>> gameState;
 
   @override
   State<CardcontainerWidget> createState() => _CardcontainerWidgetState();
@@ -28,7 +29,7 @@ class _CardcontainerWidgetState extends State<CardcontainerWidget> {
               children: List.generate(widget.gameState[row].length, (col) {
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: widget.gameState[row][col]
+                  child: widget.gameState[row][col] == CardState.untouched
                       ? GamecardWidget(
                           rowIdx: row,
                           colIdx: col,

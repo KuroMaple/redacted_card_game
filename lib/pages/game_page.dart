@@ -3,6 +3,8 @@ import 'package:redacted_card_game/data/constants.dart';
 import 'package:redacted_card_game/widgets/cardcontainer_widget.dart';
 import 'package:redacted_card_game/widgets/dialogs/introdialog_widget.dart';
 
+enum CardState { selected, removed, untouched }
+
 class GamePage extends StatefulWidget {
   const GamePage({super.key});
 
@@ -11,18 +13,32 @@ class GamePage extends StatefulWidget {
 }
 
 class _GamePageState extends State<GamePage> {
-  List<List<bool>> gameState = [
-    [true],
-    [true, true, true],
-    [true, true, true, true],
-    [true, true, true, true],
-    [true, true, true]
+  List<List<CardState>> gameState = [
+    [CardState.untouched],
+    [CardState.untouched, CardState.untouched, CardState.untouched],
+    [
+      CardState.untouched,
+      CardState.untouched,
+      CardState.untouched,
+      CardState.untouched,
+      CardState.untouched,
+    ],
+    [
+      CardState.untouched,
+      CardState.untouched,
+      CardState.untouched,
+      CardState.untouched,
+      CardState.untouched,
+      CardState.untouched,
+      CardState.untouched,
+    ],
   ];
   bool isPlayerTurn = true;
+  List<List<int>> selectedCards = [];
 
   void cardTappedCallback(int rowIdx, int colIdx) {
     setState(() {
-      gameState[rowIdx][colIdx] = false;
+      gameState[rowIdx][colIdx] = CardState.selected;
     });
   }
 
@@ -65,6 +81,13 @@ class _GamePageState extends State<GamePage> {
             CardcontainerWidget(
               cardTappedCallback: cardTappedCallback,
               gameState: gameState,
+            ),
+            SizedBox(height: 50.0),
+            IconButton(
+              iconSize: 100,
+              onPressed: () {},
+              color: Colors.green,
+              icon: Icon(Icons.check_circle),
             ),
           ],
         ),
