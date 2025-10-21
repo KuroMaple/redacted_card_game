@@ -25,11 +25,14 @@ class GameProvider extends ChangeNotifier {
           CardState.untouched,
           CardState.untouched,
         ],
-      ], _isPlayerTurn = true;
+      ],
+      _isPlayerTurn = true;
 
   bool get isPlayerTurn => _isPlayerTurn;
-  
+
   List<List<CardState>> get gameState => _gameState;
+
+  CardState cardStateAt(int rowIdx, int colIdx) => _gameState[rowIdx][colIdx];
 
   void updateCardState({
     required int rowIdx,
@@ -40,7 +43,7 @@ class GameProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void changeTurn(){
+  void changeTurn() {
     _isPlayerTurn = !_isPlayerTurn;
     notifyListeners();
   }

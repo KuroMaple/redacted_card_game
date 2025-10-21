@@ -12,22 +12,6 @@ class GamePage extends StatefulWidget {
 }
 
 class _GamePageState extends State<GamePage> {
-  // bool isPlayerTurn = true;
-
-  // void cardTappedCallback(int rowIdx, int colIdx) {
-  //   setState(() {
-  //     CardState currState = gameState[rowIdx][colIdx];
-  //     if(currState == CardState.untouched){
-  //       gameState[rowIdx][colIdx] = CardState.selected;
-  //       print("Card state set");
-  //     }
-  //     else{
-  //       gameState[rowIdx][colIdx] = CardState.untouched;
-  //       print("Card state unset");
-  //     }
-  //   });
-  // }
-
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {

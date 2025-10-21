@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class PlaceholdercardWidget extends StatelessWidget {
-  const PlaceholdercardWidget({
+class RemovedcardWidget extends StatelessWidget {
+  const RemovedcardWidget({
     super.key,
   });
 

@@ -1,6 +1,11 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:redacted_card_game/providers/game_provider.dart';
+import 'package:redacted_card_game/widgets/gamecard/removedcard_widget.dart';
+import 'package:redacted_card_game/widgets/gamecard/selectedcard_widget.dart';
+import 'package:redacted_card_game/widgets/gamecard/untouchedcard_widget.dart';
 
 class GamecardWidget extends StatefulWidget {
   const GamecardWidget({super.key, required this.rowIdx, required this.colIdx});
@@ -12,7 +17,6 @@ class GamecardWidget extends StatefulWidget {
 
 class _GamecardWidgetState extends State<GamecardWidget> {
   String getRandomCardPath() {
-
     //TODO Dark mode swap with light based on theme
     String res = 'assets/images/DarkCards/';
 
@@ -52,17 +56,40 @@ class _GamecardWidgetState extends State<GamecardWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        print(
-          "Card tapped: row ${widget.rowIdx} and col ${widget.colIdx}",
+    return Selector<GameProvider, CardState>(
+      selector: (_, gameProvider) =>
+          gameProvider.cardStateAt(widget.rowIdx, widget.colIdx),
+      builder: (context, cardState, child) {
+        Widget subCard;
+        switch (cardState) {
+          case CardState.untouched:
+            subCard = UntouchedcardWidget(cardPath: cardPath);
+            break;
+          case CardState.removed:
+            subCard = RemovedcardWidget();
+            break;
+          case CardState.selected:
+            subCard = SelectedcardWidget();
+            break;
+        }
+        return InkWell(
+          onTap: () {
+            CardState newState;
+            if (cardState == CardState.untouched) {
+              newState = CardState.selected;
+            } else {
+              newState = CardState.untouched;
+            }
+            final gameProvider = context.read<GameProvider>();
+            gameProvider.updateCardState(
+              rowIdx: widget.rowIdx,
+              colIdx: widget.colIdx,
+              newState: newState,
+            );
+          },
+          child: subCard,
         );
       },
-      child: Ink.image(
-        image: AssetImage(cardPath),
-        height: 100,
-        width: 75,
-      ),
     );
   }
 }

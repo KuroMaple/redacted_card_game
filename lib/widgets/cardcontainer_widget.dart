@@ -38,14 +38,3 @@ class _CardcontainerWidgetState extends State<CardcontainerWidget> {
   }
 }
 
-/*
-
-switch (gameState[row][col]) {
-                            case CardState.untouched:
-                              return GamecardWidget(rowIdx: row, colIdx: col);
-                            case CardState.removed:
-                              return PlaceholdercardWidget();
-                            case CardState.selected:
-                              return SelectedcardWidget();
-                          }
- */
