@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:redacted_card_game/data/constants.dart';
+import 'package:provider/provider.dart';
+import 'package:redacted_card_game/providers/game_provider.dart';
 import 'package:redacted_card_game/widgets/cardcontainer_widget.dart';
 import 'package:redacted_card_game/widgets/dialogs/introdialog_widget.dart';
-
-enum CardState { selected, removed, untouched }
 
 class GamePage extends StatefulWidget {
   const GamePage({super.key});
@@ -13,34 +12,21 @@ class GamePage extends StatefulWidget {
 }
 
 class _GamePageState extends State<GamePage> {
-  List<List<CardState>> gameState = [
-    [CardState.untouched],
-    [CardState.untouched, CardState.untouched, CardState.untouched],
-    [
-      CardState.untouched,
-      CardState.untouched,
-      CardState.untouched,
-      CardState.untouched,
-      CardState.untouched,
-    ],
-    [
-      CardState.untouched,
-      CardState.untouched,
-      CardState.untouched,
-      CardState.untouched,
-      CardState.untouched,
-      CardState.untouched,
-      CardState.untouched,
-    ],
-  ];
-  bool isPlayerTurn = true;
-  List<List<int>> selectedCards = [];
+  // bool isPlayerTurn = true;
 
-  void cardTappedCallback(int rowIdx, int colIdx) {
-    setState(() {
-      gameState[rowIdx][colIdx] = CardState.selected;
-    });
-  }
+  // void cardTappedCallback(int rowIdx, int colIdx) {
+  //   setState(() {
+  //     CardState currState = gameState[rowIdx][colIdx];
+  //     if(currState == CardState.untouched){
+  //       gameState[rowIdx][colIdx] = CardState.selected;
+  //       print("Card state set");
+  //     }
+  //     else{
+  //       gameState[rowIdx][colIdx] = CardState.untouched;
+  //       print("Card state unset");
+  //     }
+  //   });
+  // }
 
   @override
   void initState() {
@@ -63,25 +49,34 @@ class _GamePageState extends State<GamePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Player Turn",
-                  style: TextStyle(
-                    fontSize: 30.0,
-                    fontWeight: FontWeight.bold,
-                    color: isPlayerTurn ? Colors.green : null,
-                  ),
-                ),
-                Text("CPU Turn", style: KTextStyle.playerNameText),
-              ],
+            Selector<GameProvider, bool>(
+              selector: (_, gameProvider) => gameProvider.isPlayerTurn,
+              builder: (context, isPlayerTurn, child) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Player Turn",
+                      style: TextStyle(
+                        fontSize: 30.0,
+                        fontWeight: FontWeight.bold,
+                        color: isPlayerTurn ? Colors.green : null,
+                      ),
+                    ),
+                    Text(
+                      "CPU Turn",
+                      style: TextStyle(
+                        fontSize: 30.0,
+                        fontWeight: FontWeight.bold,
+                        color: !isPlayerTurn ? Colors.green : null,
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
             SizedBox(height: 50.0),
-            CardcontainerWidget(
-              cardTappedCallback: cardTappedCallback,
-              gameState: gameState,
-            ),
+            CardcontainerWidget(),
             SizedBox(height: 50.0),
             IconButton(
               iconSize: 100,
