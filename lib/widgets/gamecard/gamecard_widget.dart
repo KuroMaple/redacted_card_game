@@ -76,7 +76,7 @@ class _GamecardWidgetState extends State<GamecardWidget> {
           onTap: () {
             CardState newState;
             if (cardState == CardState.untouched) {
-              newState = CardState.selected;
+              newState = CardState.removed;
             } else {
               newState = CardState.untouched;
             }
