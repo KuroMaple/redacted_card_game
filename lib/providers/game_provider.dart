@@ -110,8 +110,26 @@ class GameProvider extends ChangeNotifier {
     if(isOneCardLeft()){
       print("Player has won");
     }
-    await Future.delayed(const Duration(seconds: 3)); 
+    await Future.delayed(const Duration(seconds: 5)); 
 
+    // Formula to win nim game here:
+    // TODO: Check for edge case where all heaps are size one
+
+    int nimSum = 0;
+    // STEP 1: Get Binary sum of all non zero heaps and XOR sum
+    for(int i = 0; i < _gameState.length; i++){
+      int currHeapSum = 0;
+      for(int j = 0; j < _gameState[i].length; j++){
+        if (_gameState[i][j] == CardState.untouched){
+          currHeapSum++;
+        }
+      }
+      nimSum ^= currHeapSum;
+    }
+
+
+    // STEP 2: If the nimSum is zero...
+    
     changeTurn(); // Change turn back to player
 
   }
@@ -147,7 +165,7 @@ class GameProvider extends ChangeNotifier {
 
     changeTurn(); 
     playCPUTurn();
-    
+
     notifyListeners();
   }
 }
