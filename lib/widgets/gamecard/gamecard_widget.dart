@@ -72,9 +72,9 @@ class _GamecardWidgetState extends State<GamecardWidget> {
             break;
         }
         return AbsorbPointer(
-          absorbing: isTappable(cardInfo.selectedRow, widget.rowIdx),
+          absorbing: !isTappable(cardInfo.selectedRow, widget.rowIdx, cardInfo.state),
           child: Opacity(
-            opacity: isTappable(cardInfo.selectedRow, widget.rowIdx) ? 0.5 : 1,
+            opacity: isOpaque(cardInfo.selectedRow, widget.rowIdx, cardInfo.state) ? 0.5 : 1,
             child: InkWell(
               onTap: () {
                 final gameProvider = context.read<GameProvider>();
@@ -90,9 +90,24 @@ class _GamecardWidgetState extends State<GamecardWidget> {
       },
     );
   }
+  
+  /// A card is tappable if:
+  /// - It has not been removed
+  /// - it is part of the selected row
+  /// - There is no selected row
 
-  bool isTappable(int? selectedRow, int currRow){
-    if(selectedRow != null && selectedRow != currRow){
+  bool isTappable(int? selectedRow, int currRow, CardState cardState){
+    if(cardState == CardState.removed || selectedRow != null && selectedRow != currRow){
+      return false;
+    }
+    return true;
+  }
+
+  /// A card is opaque if:
+  /// - It has not been removed
+  /// - There is a selected row and The card is not part of the selected row
+  bool isOpaque(int? selectedRow, int currRow, CardState cardState){
+    if(cardState != CardState.removed && selectedRow != null && currRow != selectedRow){
       return true;
     }
     return false;

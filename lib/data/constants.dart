@@ -12,3 +12,9 @@ class KTextStyle {
     fontWeight: FontWeight.bold
   );
 }
+
+class KCardSize {
+  static const double height = 1000;
+  static const double width = 750;
+  static const Size size = Size(width, height);
+}

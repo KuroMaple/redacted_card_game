@@ -85,16 +85,69 @@ class GameProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// returns true if there is only one card left 
+  bool isOneCardLeft(){
+    int removedCards = 0;
+    int totalCards = 0; // count cards in play at runtime for future dynamic changes
+    for(int i = 0; i < _gameState.length; ++i){
+      for(int j = 0; j < _gameState[i].length; ++j){
+        totalCards++;
+        if(_gameState[i][j] == CardState.removed){
+          removedCards++;
+        }
+      }
+    }
+
+    return removedCards == (totalCards - 1);
+  }
+
+  /// Executes the cpus turn
+  /// Has a timed delay to simulate thinking
+  /// - Checks to see if player has won at beginning of turn
+  /// - Has 3 second time delay
+  /// 
+  void playCPUTurn() async {
+    if(isOneCardLeft()){
+      print("Player has won");
+    }
+    await Future.delayed(const Duration(seconds: 3)); 
+
+    changeTurn(); // Change turn back to player
+
+  }
+
   /// Carries out the following actions:
+  /// - Check to see if the game is  at player turn start
+  /// - Ensure at least one card is selected i.e Selected row is set
   /// - Converted selected cards into removed cards
+  /// - Reset Selected row
   /// - Check if player has won
   /// - If player has not won, switch to pc turn
   /// - Call CPU turn function //TODO
   ///
   void endPlayerTurn() {
-    // Apply player cards
-    for (int i = 0; i < _gameState.length; ++i) {
-      for (int j = 0; j < _gameState[i].length; ++j) {}
+    //TODO: Checking win conditions should be at the start of player turn not when endPlayer turn is called
+    if(isOneCardLeft()){
+      //TODO: Player has won logic here
+      print('Game over. CPU won');
     }
+    if(_selectedRow == null){
+      //TODO: Error message here
+      return;
+    }
+
+    // Remove the cards the player selected
+    for (int i = 0; i < _gameState[_selectedRow!].length; ++i) {
+      if(_gameState[_selectedRow!][i] == CardState.selected){
+        _gameState[_selectedRow!][i] = CardState.removed;
+      }
+    }
+
+    _selectedRow = null;
+
+    changeTurn(); 
+    playCPUTurn();
+    
+    notifyListeners();
   }
 }

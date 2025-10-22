@@ -26,7 +26,7 @@ class _CardcontainerWidgetState extends State<CardcontainerWidget> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: List.generate(gameState[row].length, (col) {
                       return Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(10.0),
                         child: GamecardWidget(rowIdx: row, colIdx: col),
                       );
                     }),
