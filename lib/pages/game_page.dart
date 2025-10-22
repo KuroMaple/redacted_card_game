@@ -62,9 +62,13 @@ class _GamePageState extends State<GamePage> {
             SizedBox(height: 50.0),
             CardcontainerWidget(),
             SizedBox(height: 50.0),
+            
             IconButton(
               iconSize: 100,
-              onPressed: () {},
+              onPressed: () {
+                final gameProvider = context.read<GameProvider>();
+                gameProvider.endPlayerTurn();
+              },
               color: Colors.green,
               icon: Icon(Icons.check_circle),
             ),

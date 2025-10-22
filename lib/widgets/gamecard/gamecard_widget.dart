@@ -56,12 +56,11 @@ class _GamecardWidgetState extends State<GamecardWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Selector<GameProvider, CardState>(
-      selector: (_, gameProvider) =>
-          gameProvider.cardStateAt(widget.rowIdx, widget.colIdx),
-      builder: (context, cardState, child) {
+    return Selector<GameProvider, ({CardState state, int? selectedRow})>(
+      selector: (_, gameProvider) => gameProvider.cardInfo(widget.rowIdx, widget.colIdx), // multi selection
+      builder: (context, cardInfo, child) {
         Widget subCard;
-        switch (cardState) {
+        switch (cardInfo.state) {
           case CardState.untouched:
             subCard = UntouchedcardWidget(cardPath: cardPath);
             break;
@@ -72,24 +71,30 @@ class _GamecardWidgetState extends State<GamecardWidget> {
             subCard = SelectedcardWidget();
             break;
         }
-        return InkWell(
-          onTap: () {
-            CardState newState;
-            if (cardState == CardState.untouched) {
-              newState = CardState.removed;
-            } else {
-              newState = CardState.untouched;
-            }
-            final gameProvider = context.read<GameProvider>();
-            gameProvider.updateCardState(
-              rowIdx: widget.rowIdx,
-              colIdx: widget.colIdx,
-              newState: newState,
-            );
-          },
-          child: subCard,
+        return AbsorbPointer(
+          absorbing: isTappable(cardInfo.selectedRow, widget.rowIdx),
+          child: Opacity(
+            opacity: isTappable(cardInfo.selectedRow, widget.rowIdx) ? 0.5 : 1,
+            child: InkWell(
+              onTap: () {
+                final gameProvider = context.read<GameProvider>();
+                gameProvider.handleCardTap(
+                  rowIdx: widget.rowIdx,
+                  colIdx: widget.colIdx,
+                );
+              },
+              child: subCard,
+            ),
+          ),
         );
       },
     );
+  }
+
+  bool isTappable(int? selectedRow, int currRow){
+    if(selectedRow != null && selectedRow != currRow){
+      return true;
+    }
+    return false;
   }
 }

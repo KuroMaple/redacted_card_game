@@ -20,14 +20,17 @@ class _CardcontainerWidgetState extends State<CardcontainerWidget> {
           child: Column(
             children: [
               ...List.generate(gameState.length, (row) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(gameState[row].length, (col) {
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: GamecardWidget(rowIdx: row, colIdx: col),
-                    );
-                  }),
+                return AbsorbPointer(
+                  absorbing: false, // TODO row disable condition
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(gameState[row].length, (col) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: GamecardWidget(rowIdx: row, colIdx: col),
+                      );
+                    }),
+                  ),
                 );
               }),
             ],
@@ -37,4 +40,3 @@ class _CardcontainerWidgetState extends State<CardcontainerWidget> {
     );
   }
 }
-

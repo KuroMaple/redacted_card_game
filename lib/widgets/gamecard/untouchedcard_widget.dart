@@ -6,6 +6,6 @@ class UntouchedcardWidget extends StatelessWidget {
   final String cardPath;
   @override
   Widget build(BuildContext context) {
-    return Ink.image(image: AssetImage(cardPath), height: 100, width: 75);
+    return Image.asset(cardPath, height: 100, width: 75);
   }
 }
