@@ -32,6 +32,7 @@ class GameProvider extends ChangeNotifier {
       ],
       _isPlayerTurn = true;
 
+  /// State Getters
   bool get isPlayerTurn => _isPlayerTurn;
 
   List<List<CardState>> get gameState => _gameState;
@@ -39,49 +40,7 @@ class GameProvider extends ChangeNotifier {
   ({CardState state, int? selectedRow, bool isPlayerTurn}) cardInfo(int rowIdx, int colIdx) =>
       (state: _gameState[rowIdx][colIdx], selectedRow: _selectedRow, isPlayerTurn: _isPlayerTurn);
 
-  /// Iterates through a row and returns true if any cards are selected and false otherwise
-  bool isRowSelected(int rowIdx) {
-    for (int i = 0; i < _gameState[rowIdx].length; ++i) {
-      if (_gameState[rowIdx][i] == CardState.selected) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /// Updates card state of the requested indexed card if allowed
-  /// Allowed conditions:
-  /// - It is the players turn
-  /// - current row is the selected row or selected row is null
-  /// - Check if the row needs to be locked
-  void handleCardTap({required int rowIdx, required int colIdx}) {
-    if (!_isPlayerTurn) {
-      //TODO: Dialog to tell player its not their turn
-      return;
-    }
-    if (_selectedRow != null && _selectedRow != rowIdx) {
-      //TODO: Dialog to tell player can only select from one row at a time
-      return;
-    }
-
-    CardState newState;
-    if (_gameState[rowIdx][colIdx] == CardState.untouched) {
-      newState = CardState.selected;
-    } else {
-      newState = CardState.untouched;
-    }
-    _gameState[rowIdx][colIdx] = newState;
-
-    // Update row lock
-    if (isRowSelected(rowIdx)) {
-      _selectedRow = rowIdx;
-    } else {
-      _selectedRow = null;
-    }
-
-    notifyListeners();
-  }
-
+  
   void changeTurn() {
     _isPlayerTurn = !_isPlayerTurn;
     notifyListeners();
@@ -149,19 +108,6 @@ class GameProvider extends ChangeNotifier {
     return heapSums;
   }
 
-  /// Determines if the proposed move being made would leave the game state with heaps of size one
-  bool wouldOneSizeHeaps(int row, int cardsToRemove){
-    List<int> heapSums = getHeapSums();
-
-    heapSums[row] -= cardsToRemove;
-    for(int i = 0; i < heapSums.length; ++i){
-      // If we see any sum > than 1, we have at least one pile with more than one card
-      if(heapSums[i] > 1){
-        return false;
-      }
-    }
-    return true;
-  }
 
   /// returns true if there are an even number of heaps excluding the passed heap of size 1 false other wise
   bool evenHeaps(int rowIdx, List<int> heapSums){
@@ -177,72 +123,9 @@ class GameProvider extends ChangeNotifier {
   
  
 
-  /// Executes the cpus turn
-  /// Has a timed delay to simulate thinking
-  /// - Checks to see if player has won at beginning of turn
-  /// - Has 3 second time delay
-  /// 
-  void playCPUTurn() async {
-    if(isOneCardLeft()){
-      print("Player has won");
-      return;
-    }
-    await Future.delayed(const Duration(seconds: 2)); 
 
-    // Formula to win nim game here:
-    // TODO: Check for edge case where all heaps are size one
-
-    int nimSum = 0;
-    List<int> heapSums = getHeapSums();
-
-    // STEP 1: Get Binary sum of all non zero heaps and XOR sum
-    for(int i = 0; i < heapSums.length; i++){
-      nimSum ^= heapSums[i];
-    }
-
-    print('nimSum is $nimSum');
-
-    // STEP 2: If the nimSum is zero remove one random card from any heap since CPU is in losing position
-    // otherwise play a winning move
-    if(nimSum == 0){
-      Random random = Random();
-      int min = 0;
-      int max = _gameState.length - 1;
-
-      bool validMoveMade = false;
-      while(!validMoveMade){
-        int randomHeapIndex = random.nextInt(max - min) + min;
-        // Find one random heap with at least 1 card and remove from it
-        if(cardCountInRow(randomHeapIndex) >= 1){ // TODO: check for heap piles of one
-          removeCards(randomHeapIndex, 1);
-          validMoveMade = true;
-        }
-      }
-    } else{
-      // find a heap where the nimSum XOR currHeapSum < currHeapSum
-      // reduce that heap such that its currHeapSum is eqaul to nimSum XOR original currHeapSum
-
-      for(int i = 0; i < heapSums.length; ++i){
-        if((nimSum ^ heapSums[i]) < heapSums[i]){
-          // we can reduce this heap
-          int cardsToReduce = heapSums[i] - (nimSum ^ heapSums[i]);
-          if(wouldOneSizeHeaps(i, cardsToReduce) && evenHeaps(i, heapSums)){
-            print("one sized heaps alert");
-            // Remove one card less to leave an odd number of one sized heaps
-            cardsToReduce--;
-          }
-          removeCards(i, cardsToReduce);
-          break; // since we found a pile to pull from
-        }
-      }
-
-    }
-    changeTurn(); // Change turn back to player
-    if(isOneCardLeft()){
-      print("CPU WINS");
-    }
-  }
-
+  /// Main Client Functions*********************************************************
+    
   /// Carries out the following actions:
   /// - Ensure at least one card is selected i.e Selected row is set
   /// - Converted selected cards into removed cards
@@ -272,4 +155,151 @@ class GameProvider extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  /// Updates card state of the requested indexed card if allowed
+  /// Allowed conditions:
+  /// - It is the players turn
+  /// - current row is the selected row or selected row is null
+  /// - Check if the row needs to be locked
+  void handleCardTap({required int rowIdx, required int colIdx}) {
+    if (!_isPlayerTurn) {
+      //TODO: Dialog to tell player its not their turn
+      return;
+    }
+    if (_selectedRow != null && _selectedRow != rowIdx) {
+      //TODO: Dialog to tell player can only select from one row at a time
+      return;
+    }
+
+    CardState newState;
+    if (_gameState[rowIdx][colIdx] == CardState.untouched) {
+      newState = CardState.selected;
+    } else {
+      newState = CardState.untouched;
+    }
+    _gameState[rowIdx][colIdx] = newState;
+
+    // Update row lock
+    if (isRowSelected(rowIdx)) {
+      _selectedRow = rowIdx;
+    } else {
+      _selectedRow = null;
+    }
+
+    notifyListeners();
+  }
+
+  /// HELPER FUNCTIONS*********************************************************
+  
+  /// Executes the cpus turn
+  /// Has a timed delay to simulate thinking
+  /// - Checks to see if player has won at beginning of turn
+  /// - Has 3 second time delay
+  /// 
+  void playCPUTurn() async {
+    if(isOneCardLeft()){
+      print("Player has won");
+      return;
+    }
+    // await Future.delayed(const Duration(seconds: 2)); 
+
+    // Formula to win nim game here:
+    // TODO: Check for edge case where all heaps are size one
+
+    int nimSum = 0;
+    List<int> heapSums = getHeapSums();
+
+    // STEP 1: Get Binary sum of all non zero heaps and XOR sum
+    for(int i = 0; i < heapSums.length; i++){
+      nimSum ^= heapSums[i];
+    }
+
+    print('nimSum is $nimSum');
+
+    // STEP 2: If the nimSum is zero remove one random card from any heap since CPU is in losing position
+    // otherwise play a winning move
+    bool madeCPUMove = false;
+
+    if(nimSum == 0){
+      // CPU is in losing position
+      List<int> nonEmptyHeaps = [];
+      for(int i = 0; i < heapSums.length; ++i){
+        if(heapSums[i] >= 1) nonEmptyHeaps.add(i);
+      }
+      if (nonEmptyHeaps.isNotEmpty){
+        int idx = nonEmptyHeaps[getRandom(0, nonEmptyHeaps.length)];
+        removeCards(idx, 1);
+        madeCPUMove = true;
+      } else {
+        throw Exception('Unable to remove random card from heaps');
+      }
+
+    } else{
+      // find a heap where the nimSum XOR currHeapSum < currHeapSum
+      // reduce that heap such that its currHeapSum is eqaul to nimSum XOR original currHeapSum
+      
+      for(int i = 0; i < heapSums.length; ++i){
+        if(heapSums[i] == 0) continue;
+        final int target = nimSum ^ heapSums[i];
+
+        if(target < heapSums[i]){
+          int cardsToReduce = heapSums[i] - target;
+
+          // Compute resulting heaps after reduction
+          final List<int> newHeapSums = List<int>.from(heapSums);
+          newHeapSums[i] = heapSums[i] - cardsToReduce;
+
+          // Check if the heaps are of size 1
+          if(newHeapSums.every((v) => v <= 1)){
+            final int onesCount = newHeapSums.where((v) => v == 1).length;
+            final int nonZeroHeapCountOrignal = heapSums.where((v) => v >= 1).length;
+           
+            if (onesCount % 2 == 0){
+              if (cardsToReduce > 0){
+                // we had odd number of heaps before, remove everything except the last card
+                 if(nonZeroHeapCountOrignal % 2 == 1){
+                  cardsToReduce = min(1, cardsToReduce);
+                 } else{
+                  // Remove the entire row to leave an odd number of cards
+                  cardsToReduce = max(cardsToReduce, heapSums[i]);
+                 }
+                
+              }
+            }
+          }
+
+          if(cardsToReduce > 0){
+            removeCards(i, cardsToReduce);
+            madeCPUMove = true;
+            break;
+          }
+        }
+      }
+
+    }
+
+    if(!madeCPUMove){
+      throw Exception('CPU has not made a move, could not find a valid move');
+    }
+    changeTurn(); // Change turn back to player
+    if(isOneCardLeft()){
+      print("CPU WINS");
+    }
+  }
+
+  /// Iterates through a row and returns true if any cards are selected and false otherwise
+  bool isRowSelected(int rowIdx) {
+    for (int i = 0; i < _gameState[rowIdx].length; ++i) {
+      if (_gameState[rowIdx][i] == CardState.selected) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /// Generate random integer in [min, max)
+  int getRandom(int min, int max){
+    return Random().nextInt(max - min) + min;
+  }
+
 }
