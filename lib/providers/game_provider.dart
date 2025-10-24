@@ -36,8 +36,8 @@ class GameProvider extends ChangeNotifier {
 
   List<List<CardState>> get gameState => _gameState;
 
-  ({CardState state, int? selectedRow}) cardInfo(int rowIdx, int colIdx) =>
-      (state: _gameState[rowIdx][colIdx], selectedRow: _selectedRow);
+  ({CardState state, int? selectedRow, bool isPlayerTurn}) cardInfo(int rowIdx, int colIdx) =>
+      (state: _gameState[rowIdx][colIdx], selectedRow: _selectedRow, isPlayerTurn: _isPlayerTurn);
 
   /// Iterates through a row and returns true if any cards are selected and false otherwise
   bool isRowSelected(int rowIdx) {
@@ -125,15 +125,57 @@ class GameProvider extends ChangeNotifier {
       }
 
       // Remove numCards
-      for(int j = 0; j < numCards; ++j){
+      int removedCards = 0;
+      int j = 0;
+      while(removedCards < numCards){
         if(_gameState[requestedRow][j] == CardState.untouched){
           _gameState[requestedRow][j] = CardState.removed;
+          removedCards++;
         }
+        j++;
       }
     } on Exception catch (e) {
       print(e);
     }
   }
+
+
+  /// Returns an array of sums of each heap ( the number of untouched cards in each row)
+  List<int> getHeapSums(){
+    List<int> heapSums = [];
+    for(int i = 0; i < _gameState.length; i++){
+      heapSums.add(cardCountInRow(i));
+    }
+    return heapSums;
+  }
+
+  /// Determines if the proposed move being made would leave the game state with heaps of size one
+  bool wouldOneSizeHeaps(int row, int cardsToRemove){
+    List<int> heapSums = getHeapSums();
+
+    heapSums[row] -= cardsToRemove;
+    for(int i = 0; i < heapSums.length; ++i){
+      // If we see any sum > than 1, we have at least one pile with more than one card
+      if(heapSums[i] > 1){
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /// returns true if there are an even number of heaps excluding the passed heap of size 1 false other wise
+  bool evenHeaps(int rowIdx, List<int> heapSums){
+    int excludedCount = 0;
+    for(int i = 0; i < heapSums.length; ++i){
+      if(i == rowIdx || heapSums[i] != 1){
+        continue;
+      }
+      excludedCount++;
+    }
+    return (excludedCount % 2) == 0;
+  }
+  
+ 
 
   /// Executes the cpus turn
   /// Has a timed delay to simulate thinking
@@ -143,6 +185,7 @@ class GameProvider extends ChangeNotifier {
   void playCPUTurn() async {
     if(isOneCardLeft()){
       print("Player has won");
+      return;
     }
     await Future.delayed(const Duration(seconds: 2)); 
 
@@ -150,18 +193,11 @@ class GameProvider extends ChangeNotifier {
     // TODO: Check for edge case where all heaps are size one
 
     int nimSum = 0;
-    List<int> heapSums = [0,0,0,0]; // initialize with 4 heaps
+    List<int> heapSums = getHeapSums();
 
     // STEP 1: Get Binary sum of all non zero heaps and XOR sum
-    for(int i = 0; i < _gameState.length; i++){
-      int currHeapSum = 0;
-      for(int j = 0; j < _gameState[i].length; j++){
-        if (_gameState[i][j] == CardState.untouched){
-          currHeapSum++;
-        }
-      }
-      heapSums[i] += currHeapSum; // Track the sum of each hap
-      nimSum ^= currHeapSum;
+    for(int i = 0; i < heapSums.length; i++){
+      nimSum ^= heapSums[i];
     }
 
     print('nimSum is $nimSum');
@@ -177,7 +213,7 @@ class GameProvider extends ChangeNotifier {
       while(!validMoveMade){
         int randomHeapIndex = random.nextInt(max - min) + min;
         // Find one random heap with at least 1 card and remove from it
-        if(cardCountInRow(randomHeapIndex) >= 1){
+        if(cardCountInRow(randomHeapIndex) >= 1){ // TODO: check for heap piles of one
           removeCards(randomHeapIndex, 1);
           validMoveMade = true;
         }
@@ -189,10 +225,17 @@ class GameProvider extends ChangeNotifier {
       for(int i = 0; i < heapSums.length; ++i){
         if((nimSum ^ heapSums[i]) < heapSums[i]){
           // we can reduce this heap
-          removeCards(i, heapSums[i] - (nimSum ^ heapSums[i]));
-          break;
+          int cardsToReduce = heapSums[i] - (nimSum ^ heapSums[i]);
+          if(wouldOneSizeHeaps(i, cardsToReduce) && evenHeaps(i, heapSums)){
+            print("one sized heaps alert");
+            // Remove one card less to leave an odd number of one sized heaps
+            cardsToReduce--;
+          }
+          removeCards(i, cardsToReduce);
+          break; // since we found a pile to pull from
         }
       }
+
     }
     changeTurn(); // Change turn back to player
     if(isOneCardLeft()){

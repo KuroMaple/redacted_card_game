@@ -56,7 +56,7 @@ class _GamecardWidgetState extends State<GamecardWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Selector<GameProvider, ({CardState state, int? selectedRow})>(
+    return Selector<GameProvider, ({CardState state, int? selectedRow, bool isPlayerTurn})>(
       selector: (_, gameProvider) => gameProvider.cardInfo(widget.rowIdx, widget.colIdx), // multi selection
       builder: (context, cardInfo, child) {
         Widget subCard;
@@ -72,7 +72,7 @@ class _GamecardWidgetState extends State<GamecardWidget> {
             break;
         }
         return AbsorbPointer(
-          absorbing: !isTappable(cardInfo.selectedRow, widget.rowIdx, cardInfo.state),
+          absorbing: !isTappable(cardInfo.selectedRow, widget.rowIdx, cardInfo.state, cardInfo.isPlayerTurn),
           child: Opacity(
             opacity: isOpaque(cardInfo.selectedRow, widget.rowIdx, cardInfo.state) ? 0.5 : 1,
             child: InkWell(
@@ -96,8 +96,8 @@ class _GamecardWidgetState extends State<GamecardWidget> {
   /// - it is part of the selected row
   /// - There is no selected row
 
-  bool isTappable(int? selectedRow, int currRow, CardState cardState){
-    if(cardState == CardState.removed || selectedRow != null && selectedRow != currRow){
+  bool isTappable(int? selectedRow, int currRow, CardState cardState, bool isPlayerTurn){
+    if(!isPlayerTurn||cardState == CardState.removed || selectedRow != null && selectedRow != currRow){
       return false;
     }
     return true;
