@@ -24,7 +24,7 @@ class _IntrodialogWidgetState extends State<IntrodialogWidget> {
       'When you choose a row, you can take any number of cards — from just one to the entire row.',
       'But here\'the catch: you can only pick from one row per turn, so choose wisely.',
       'Whoever is forced to pick up the very last card loses the game.',
-      'That\'s all you need to know. Let\'s play!',
+      'That\'s all you need to know.',
     ];
 
     return AlertDialog(
