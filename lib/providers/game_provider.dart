@@ -1,13 +1,13 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
 enum CardState { selected, removed, untouched }
 
 class GameProvider extends ChangeNotifier {
   final List<List<CardState>> _gameState;
   bool _isPlayerTurn;
+  bool _gameOver;
   int? _selectedRow;
   GameProvider()
     : _gameState = [
@@ -30,21 +30,20 @@ class GameProvider extends ChangeNotifier {
           CardState.untouched,
         ],
       ],
-      _isPlayerTurn = true;
+      _isPlayerTurn = true,
+      _gameOver = false;
 
   /// State Getters
   bool get isPlayerTurn => _isPlayerTurn;
+
+  bool get isGameOver => _gameOver;
 
   List<List<CardState>> get gameState => _gameState;
 
   ({CardState state, int? selectedRow, bool isPlayerTurn}) cardInfo(int rowIdx, int colIdx) =>
       (state: _gameState[rowIdx][colIdx], selectedRow: _selectedRow, isPlayerTurn: _isPlayerTurn);
 
-  
-  void changeTurn() {
-    _isPlayerTurn = !_isPlayerTurn;
-    notifyListeners();
-  }
+
 
   /// returns true if there is only one card left 
   bool isOneCardLeft(){
@@ -199,9 +198,11 @@ class GameProvider extends ChangeNotifier {
   void playCPUTurn() async {
     if(isOneCardLeft()){
       print("Player has won");
+      _gameOver = true;
+      notifyListeners();
       return;
     }
-    // await Future.delayed(const Duration(seconds: 2)); 
+    await Future.delayed(const Duration(seconds: 2)); 
 
     // Formula to win nim game here:
     // TODO: Check for edge case where all heaps are size one
@@ -284,7 +285,9 @@ class GameProvider extends ChangeNotifier {
     changeTurn(); // Change turn back to player
     if(isOneCardLeft()){
       print("CPU WINS");
+      _gameOver = true;
     }
+    notifyListeners();
   }
 
   /// Iterates through a row and returns true if any cards are selected and false otherwise
@@ -302,4 +305,29 @@ class GameProvider extends ChangeNotifier {
     return Random().nextInt(max - min) + min;
   }
 
+
+  void changeTurn() {
+    _isPlayerTurn = !_isPlayerTurn;
+    notifyListeners();
+  }
+
+  /// Resets the entire game state to the initial configuration
+  /// - All cards back to untouched
+  /// - Player turn first
+  /// - Game over cleared
+  /// - No selected row
+  void resetGame() {
+    // Reset card states in-place to preserve the existing list references
+    for (int i = 0; i < _gameState.length; i++) {
+      for (int j = 0; j < _gameState[i].length; j++) {
+        _gameState[i][j] = CardState.untouched;
+      }
+    }
+
+    _isPlayerTurn = true;
+    _gameOver = false;
+    _selectedRow = null;
+
+    notifyListeners();
+  }
 }

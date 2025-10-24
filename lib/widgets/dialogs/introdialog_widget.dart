@@ -17,15 +17,16 @@ class _IntrodialogWidgetState extends State<IntrodialogWidget> {
       'How to play?',
       'How to play?',
       'How to play?',
-      'Enough talk lets fight',
+      'Enough talk let\'s fight',
     ];
     List<String> instructions = [
-      'In this game you\'ll take turns picking cards up against a CPU.',
-      'Once you choose a row to pick from, you can take 1 to all of the cards',
-      'BUT you can only take from one row at a time so choose carefully.',
-      'The person who has to pick up the last card on their turn loses.',
-      'Good luck!',
+      'In this game, you\'ll take turns picking up cards against a CPU opponent.',
+      'When you choose a row, you can take any number of cards — from just one to the entire row.',
+      'But here\'the catch: you can only pick from one row per turn, so choose wisely.',
+      'Whoever is forced to pick up the very last card loses the game.',
+      'That\'s all you need to know. Let\'s play!',
     ];
+
     return AlertDialog(
       title: Text(titles[instructionIdx]),
       content: Text(instructions[instructionIdx]),
@@ -42,7 +43,7 @@ class _IntrodialogWidgetState extends State<IntrodialogWidget> {
           },
           child: (instructionIdx < instructions.length - 1)
               ? Text('Next ${instructionIdx + 1}/${instructions.length}')
-              : Text('Let me at em'),
+              : Text('Play'),
         ),
       ],
     );
