@@ -21,7 +21,7 @@ class _IntrodialogWidgetState extends State<IntrodialogWidget> {
     ];
     List<String> instructions = [
       'In this game, you\'ll take turns picking up cards against a CPU opponent.',
-      'When you choose a row, you can take any number of cards — from just one to the entire row.',
+      'When you choose a row, you can take any number of cards, from just one to the entire row.',
       'But here\'the catch: you can only pick from one row per turn, so choose wisely.',
       'Whoever is forced to pick up the very last card loses the game.',
       'That\'s all you need to know.',

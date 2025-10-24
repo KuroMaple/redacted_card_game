@@ -28,22 +28,25 @@ class _GamePageState extends State<GamePage> {
 
   @override
   Widget build(BuildContext parentContext) {
+    final bool isPlayerTurn = context.select<GameProvider, bool>(
+      (gameProvider) => gameProvider.isPlayerTurn,
+    );
+    final GameProvider gameProvider = context.read<GameProvider>();
+
     return Container(
       padding: EdgeInsets.all(20.0),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Selector<GameProvider, bool>(
-              selector: (_, gameprovider) => gameprovider.isGameOver,
-              builder: (context, isGameOver, child) {
-                if (isGameOver) {
+            Builder(
+              builder: (context) {
+                if (gameProvider.isGameOver) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     showDialog(
                       context: context,
                       builder: (context) {
-                        final gameprovider = parentContext.read<GameProvider>();
-                        return GameoverdialogWidget(gameProvider: gameprovider);
+                        return GameoverdialogWidget(gameProvider: gameProvider);
                       },
                     );
                   });
@@ -51,43 +54,39 @@ class _GamePageState extends State<GamePage> {
                 return SizedBox.shrink();
               },
             ),
-            Selector<GameProvider, bool>(
-              selector: (_, gameProvider) => gameProvider.isPlayerTurn,
-              builder: (context, isPlayerTurn, child) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Player Turn",
-                      style: TextStyle(
-                        fontSize: 30.0,
-                        fontWeight: FontWeight.bold,
-                        color: isPlayerTurn ? Colors.green : null,
-                      ),
-                    ),
-                    Text(
-                      "CPU Turn",
-                      style: TextStyle(
-                        fontSize: 30.0,
-                        fontWeight: FontWeight.bold,
-                        color: !isPlayerTurn ? Colors.green : null,
-                      ),
-                    ),
-                  ],
-                );
-              },
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Player Turn",
+                  style: TextStyle(
+                    fontSize: 30.0,
+                    fontWeight: FontWeight.bold,
+                    color: isPlayerTurn ? Colors.green : null,
+                  ),
+                ),
+                Text(
+                  "CPU Turn",
+                  style: TextStyle(
+                    fontSize: 30.0,
+                    fontWeight: FontWeight.bold,
+                    color: !isPlayerTurn ? Colors.green : null,
+                  ),
+                ),
+              ],
             ),
             SizedBox(height: 50.0),
             CardcontainerWidget(),
             SizedBox(height: 50.0),
-
             IconButton(
               iconSize: 100,
+              enableFeedback: isPlayerTurn,
               onPressed: () {
-                final gameProvider = context.read<GameProvider>();
-                gameProvider.endPlayerTurn();
+                if (isPlayerTurn) {
+                  gameProvider.endPlayerTurn();
+                }
               },
-              color: Colors.green,
+              color: isPlayerTurn ? Colors.green : Colors.grey,
               icon: Icon(Icons.check_circle),
             ),
           ],
