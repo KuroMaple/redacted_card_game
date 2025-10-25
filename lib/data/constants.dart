@@ -5,16 +5,16 @@ class KTextStyle {
     color: Colors.green,
     fontSize: 70.0,
     letterSpacing: 15.0,
-    fontWeight: FontWeight.bold
+    fontWeight: FontWeight.bold,
   );
   static const TextStyle playerNameText = TextStyle(
     fontSize: 30.0,
-    fontWeight: FontWeight.bold
+    fontWeight: FontWeight.bold,
   );
 }
 
 class KCardSize {
-  static const double height = 1000;
-  static const double width = 750;
+  static const double height = 100;
+  static const double width = 75;
   static const Size size = Size(width, height);
 }

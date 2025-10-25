@@ -12,7 +12,7 @@ class WidgetTree extends StatelessWidget {
       appBar: AppBar(),
       body: ChangeNotifierProvider(
         create: (context) => GameProvider(),
-        child: GamePage()
+        child: SafeArea(child: Center(child: GamePage()))
         ),
     );
   }

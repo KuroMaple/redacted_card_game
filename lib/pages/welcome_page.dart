@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:redacted_card_game/data/constants.dart';
+import 'package:redacted_card_game/pages/settings_page.dart';
 import 'package:redacted_card_game/widget_tree.dart';
 
 class WelcomePage extends StatelessWidget {
@@ -10,46 +11,110 @@ class WelcomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     // Responsive work
     final currOrientation = MediaQuery.of(context).orientation;
-    final currWinWidth = MediaQuery.of(context).size.width;
+    final currWinAR = MediaQuery.of(context).size.aspectRatio;
 
-    print('Current width is $currWinWidth');
-    // 850 px
-
-    if (currOrientation == Orientation.landscape || currWinWidth > 850) {
+    if (currWinAR > 2.1) {
       return Scaffold(
         appBar: AppBar(),
-        body: FittedBox(
+        body: Center(
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                FittedBox(
-                  child: Column(
-                    children: [
-                      Text('REDACTED', style: KTextStyle.welcomeTitleText),
-                      Lottie.asset('assets/lotties/ace_of_spade.json'),
-                    ],
+            padding: const EdgeInsets.fromLTRB(40, 20, 40, 20),
+            child: FittedBox(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text('REDACTED', style: KTextStyle.welcomeTitleText),
+                  SizedBox(height: 40.0),
+                  FilledButton(
+                    style: ButtonStyle(
+                      minimumSize: WidgetStateProperty.all(Size(200, 75)),
+                    ),
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return WidgetTree();
+                          },
+                        ),
+                      );
+                    },
+                    child: Text("Play", style: TextStyle(fontSize: 30)),
                   ),
-                ),
-                FilledButton(
-                  style: ButtonStyle(
-                    minimumSize: WidgetStateProperty.all(Size(200, 75)),
+                  SizedBox(height: 10.0),
+                  OutlinedButton(
+                    style: ButtonStyle(
+                      minimumSize: WidgetStateProperty.all(Size(200, 75)),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return SettingsPage();
+                          },
+                        ),
+                      );
+                    },
+                    child: Text('Settings', style: TextStyle(fontSize: 20)),
                   ),
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return WidgetTree();
-                        },
-                      ),
-                    );
-                  },
-                  child: Text("Play", style: TextStyle(fontSize: 30)),
-                ),
-              ],
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    if (currOrientation == Orientation.landscape) {
+      return Scaffold(
+        appBar: AppBar(),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(40, 20, 40, 20),
+            child: FittedBox(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Lottie.asset('assets/lotties/ace_of_spade.json'),
+                  Text('REDACTED', style: KTextStyle.welcomeTitleText),
+                  SizedBox(height: 40.0),
+                  FilledButton(
+                    style: ButtonStyle(
+                      minimumSize: WidgetStateProperty.all(Size(200, 75)),
+                    ),
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return WidgetTree();
+                          },
+                        ),
+                      );
+                    },
+                    child: Text("Play", style: TextStyle(fontSize: 30)),
+                  ),
+                  IconButton(
+                    style: ButtonStyle(
+                      minimumSize: WidgetStateProperty.all(Size(200, 75)),
+                    ),
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return WidgetTree();
+                          },
+                        ),
+                      );
+                    },
+                    icon: Icon(Icons.settings),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -83,6 +148,23 @@ class WelcomePage extends StatelessWidget {
                 );
               },
               child: Text("Play", style: TextStyle(fontSize: 30)),
+            ),
+            SizedBox(height: 10.0),
+            OutlinedButton(
+              style: ButtonStyle(
+                minimumSize: WidgetStateProperty.all(Size(200, 75)),
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return SettingsPage();
+                    },
+                  ),
+                );
+              },
+              child: Text('Settings', style: TextStyle(fontSize: 20)),
             ),
           ],
         ),

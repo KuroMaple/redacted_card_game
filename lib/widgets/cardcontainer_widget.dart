@@ -17,25 +17,25 @@ class _CardcontainerWidgetState extends State<CardcontainerWidget> {
       selector: (_, gameProvider) => gameProvider.gameState,
       builder: (context, gameState, child) {
         return FittedBox(
-            child: Column(
-              children: [
-                ...List.generate(gameState.length, (row) {
-                  return AbsorbPointer(
-                    absorbing: false, // TODO row disable condition
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(gameState[row].length, (col) {
-                        return Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: GamecardWidget(rowIdx: row, colIdx: col),
-                        );
-                      }),
-                    ),
-                  );
-                }),
-              ],
-            ),
-          );
+          child: Column(
+            children: [
+              ...List.generate(gameState.length, (row) {
+                return AbsorbPointer(
+                  absorbing: false, // TODO row disable condition
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(gameState[row].length, (col) {
+                      return Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: GamecardWidget(rowIdx: row, colIdx: col),
+                      );
+                    }),
+                  ),
+                );
+              }),
+            ],
+          ),
+        );
       },
     );
   }

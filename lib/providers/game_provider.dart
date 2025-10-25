@@ -282,6 +282,9 @@ class GameProvider extends ChangeNotifier {
     if(!madeCPUMove){
       throw Exception('CPU has not made a move, could not find a valid move');
     }
+    notifyListeners();
+    await Future.delayed(const Duration(seconds: 1)); 
+    
     changeTurn(); // Change turn back to player
     if(isOneCardLeft()){
       print("CPU WINS");
