@@ -97,21 +97,22 @@ class WelcomePage extends StatelessWidget {
                     },
                     child: Text("Play", style: TextStyle(fontSize: 30)),
                   ),
-                  IconButton(
+                  SizedBox(height: 10.0),
+                  OutlinedButton(
                     style: ButtonStyle(
                       minimumSize: WidgetStateProperty.all(Size(200, 75)),
                     ),
                     onPressed: () {
-                      Navigator.pushReplacement(
+                      Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) {
-                            return WidgetTree();
+                            return SettingsPage();
                           },
                         ),
                       );
                     },
-                    icon: Icon(Icons.settings),
+                    child: Text('Settings', style: TextStyle(fontSize: 20)),
                   ),
                 ],
               ),
