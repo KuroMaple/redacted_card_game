@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:redacted_card_game/providers/settings_provider.dart';
 
 enum CardState { selected, removed, untouched }
 
@@ -9,7 +10,9 @@ class GameProvider extends ChangeNotifier {
   bool _isPlayerTurn;
   bool _gameOver;
   int? _selectedRow;
-  GameProvider()
+  SettingsProvider? _settingsProvider;
+  
+  GameProvider({SettingsProvider? settingsProvider})
     : _gameState = [
         [CardState.untouched],
         [CardState.untouched, CardState.untouched, CardState.untouched],
@@ -30,8 +33,9 @@ class GameProvider extends ChangeNotifier {
           CardState.untouched,
         ],
       ],
-      _isPlayerTurn = true,
-      _gameOver = false;
+      _isPlayerTurn = (settingsProvider?.difficulty ?? Difficulty.normal) == Difficulty.normal, // Normal mode means player starts, impossible mode means CPU starts
+      _gameOver = false,
+      _settingsProvider = settingsProvider;
 
   /// State Getters
   bool get isPlayerTurn => _isPlayerTurn;

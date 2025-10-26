@@ -1,26 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:redacted_card_game/data/constants.dart';
 import 'package:redacted_card_game/pages/welcome_page.dart';
+import 'package:redacted_card_game/providers/game_provider.dart';
+import 'package:redacted_card_game/providers/settings_provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => SettingsProvider()),
+        ChangeNotifierProxyProvider<SettingsProvider, GameProvider>(
+          create: (context) => GameProvider(
+            settingsProvider: context.read<SettingsProvider>(),
+          ),
+          update: (_, settingsProvider, gameProvider) => gameProvider ?? GameProvider(settingsProvider: settingsProvider),
+        ),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'REDACTED',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.lightGreenAccent,
-          brightness: Brightness.dark,
-        ),
-      ),
-      home: const MyHomePage(),
+    return Consumer<SettingsProvider>(
+      builder: (context, settingsProvider, child) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: KConstants.appName,
+          theme: settingsProvider.getThemeData(),
+          home: const MyHomePage(),
+        );
+      },
     );
   }
 }

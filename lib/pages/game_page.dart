@@ -17,6 +17,7 @@ class _GamePageState extends State<GamePage> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       showDialog(
+        barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
           return IntrodialogWidget();
@@ -48,6 +49,7 @@ class _GamePageState extends State<GamePage> {
                   if (gameProvider.isGameOver) {
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       showDialog(
+                        barrierDismissible: false,
                         context: context,
                         builder: (context) {
                           return GameoverdialogWidget(
@@ -110,6 +112,7 @@ class _GamePageState extends State<GamePage> {
                 if (gameProvider.isGameOver) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     showDialog(
+                      barrierDismissible: false,
                       context: context,
                       builder: (context) {
                         return GameoverdialogWidget(gameProvider: gameProvider);

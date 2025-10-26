@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:redacted_card_game/providers/game_provider.dart';
 
 class IntrodialogWidget extends StatefulWidget {
   const IntrodialogWidget({super.key});
@@ -9,6 +11,7 @@ class IntrodialogWidget extends StatefulWidget {
 
 class _IntrodialogWidgetState extends State<IntrodialogWidget> {
   int instructionIdx = 0;
+  
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +30,8 @@ class _IntrodialogWidgetState extends State<IntrodialogWidget> {
       'That\'s all you need to know.',
     ];
 
+    final gameProvider = context.read<GameProvider>();
+
     return AlertDialog(
       title: Text(titles[instructionIdx]),
       content: Text(instructions[instructionIdx]),
@@ -38,6 +43,10 @@ class _IntrodialogWidgetState extends State<IntrodialogWidget> {
                 instructionIdx++;
               } else {
                 Navigator.of(context).pop();
+                // If CPU starts then call the make move function
+                if(!gameProvider.isPlayerTurn){
+                  gameProvider.playCPUTurn();
+                }
               }
             });
           },
