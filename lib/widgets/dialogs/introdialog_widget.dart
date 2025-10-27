@@ -8,11 +8,10 @@ class IntrodialogWidget extends StatefulWidget {
   @override
   State<IntrodialogWidget> createState() => _IntrodialogWidgetState();
 }
-
+Widget taiLungMeme = Image.asset('assets/images/tai-lung-meme.webp', fit: BoxFit.scaleDown,); // pre loading?
 class _IntrodialogWidgetState extends State<IntrodialogWidget> {
   int instructionIdx = 0;
   
-
   @override
   Widget build(BuildContext context) {
     List<String> titles = [
@@ -25,7 +24,7 @@ class _IntrodialogWidgetState extends State<IntrodialogWidget> {
     List<String> instructions = [
       'In this game, you\'ll take turns picking up cards against a CPU opponent.',
       'When you choose a row, you can take any number of cards, from just one to the entire row.',
-      'But here\'the catch: you can only pick from one row per turn, so choose wisely.',
+      'But here\'s the catch: you can only pick from one row per turn, so choose wisely.',
       'Whoever is forced to pick up the very last card loses the game.',
       'That\'s all you need to know.',
     ];
@@ -34,7 +33,9 @@ class _IntrodialogWidgetState extends State<IntrodialogWidget> {
 
     return AlertDialog(
       title: Text(titles[instructionIdx]),
-      content: Text(instructions[instructionIdx]),
+      content: instructionIdx == 4
+          ? taiLungMeme
+          : Text(instructions[instructionIdx]),
       actions: [
         FilledButton(
           onPressed: () {
@@ -44,7 +45,7 @@ class _IntrodialogWidgetState extends State<IntrodialogWidget> {
               } else {
                 Navigator.of(context).pop();
                 // If CPU starts then call the make move function
-                if(!gameProvider.isPlayerTurn){
+                if (!gameProvider.isPlayerTurn) {
                   gameProvider.playCPUTurn();
                 }
               }

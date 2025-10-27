@@ -31,11 +31,8 @@ class _GamePageState extends State<GamePage> {
   Widget build(BuildContext parentContext) {
     final currOrientation = MediaQuery.of(context).orientation;
 
-    final bool isPlayerTurn = context.select<GameProvider, bool>(
-      (gameProvider) => gameProvider.isPlayerTurn,
-    );
-    final GameProvider gameProvider = context.read<GameProvider>();
-
+    final gameProvider = context.watch<GameProvider>();
+    
     if (currOrientation == Orientation.landscape) {
       return FittedBox(
         child: Padding(
@@ -70,18 +67,18 @@ class _GamePageState extends State<GamePage> {
                     style: TextStyle(
                       fontSize: 30.0,
                       fontWeight: FontWeight.bold,
-                      color: isPlayerTurn ? Colors.green : null,
+                      color: gameProvider.isPlayerTurn ? Colors.green : null,
                     ),
                   ),
                   IconButton(
                     iconSize: 100,
-                    enableFeedback: isPlayerTurn,
+                    enableFeedback: gameProvider.isPlayerTurn,
                     onPressed: () {
-                      if (isPlayerTurn) {
+                      if (gameProvider.isPlayerTurn) {
                         gameProvider.endPlayerTurn();
                       }
                     },
-                    color: isPlayerTurn ? Colors.green : Colors.grey,
+                    color: gameProvider.selectedRow != null ? Colors.green : Colors.grey,
                     icon: Icon(Icons.check_circle),
                   ),
                 ],
@@ -92,7 +89,7 @@ class _GamePageState extends State<GamePage> {
                 style: TextStyle(
                   fontSize: 30.0,
                   fontWeight: FontWeight.bold,
-                  color: !isPlayerTurn ? Colors.green : null,
+                  color: !gameProvider.isPlayerTurn ? Colors.green : null,
                 ),
               ),
             ],
@@ -131,7 +128,7 @@ class _GamePageState extends State<GamePage> {
                   style: TextStyle(
                     fontSize: 30.0,
                     fontWeight: FontWeight.bold,
-                    color: isPlayerTurn ? Colors.green : null,
+                    color: gameProvider.isPlayerTurn ? Colors.green : null,
                   ),
                 ),
                 Text(
@@ -139,7 +136,7 @@ class _GamePageState extends State<GamePage> {
                   style: TextStyle(
                     fontSize: 30.0,
                     fontWeight: FontWeight.bold,
-                    color: !isPlayerTurn ? Colors.green : null,
+                    color: !gameProvider.isPlayerTurn ? Colors.green : null,
                   ),
                 ),
               ],
@@ -149,13 +146,13 @@ class _GamePageState extends State<GamePage> {
             SizedBox(height: 50.0),
             IconButton(
               iconSize: 100,
-              enableFeedback: isPlayerTurn,
+              enableFeedback: gameProvider.isPlayerTurn,
               onPressed: () {
-                if (isPlayerTurn) {
+                if (gameProvider.isPlayerTurn) {
                   gameProvider.endPlayerTurn();
                 }
               },
-              color: isPlayerTurn ? Colors.green : Colors.grey,
+              color: gameProvider.isPlayerTurn ? Colors.green : Colors.grey,
               icon: Icon(Icons.check_circle),
             ),
           ],

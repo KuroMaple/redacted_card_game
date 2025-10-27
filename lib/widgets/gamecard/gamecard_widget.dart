@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:redacted_card_game/providers/game_provider.dart';
+import 'package:redacted_card_game/providers/settings_provider.dart';
 import 'package:redacted_card_game/widgets/gamecard/removedcard_widget.dart';
 import 'package:redacted_card_game/widgets/gamecard/selectedcard_widget.dart';
 import 'package:redacted_card_game/widgets/gamecard/untouchedcard_widget.dart';
@@ -16,9 +17,10 @@ class GamecardWidget extends StatefulWidget {
 }
 
 class _GamecardWidgetState extends State<GamecardWidget> {
-  String getRandomCardPath() {
-    //TODO Dark mode swap with light based on theme
-    String res = 'assets/images/DarkCards/';
+
+  
+    
+  String getRandomCardPath(String res) {
 
     Random random = Random();
     int min = 1;
@@ -51,11 +53,26 @@ class _GamecardWidgetState extends State<GamecardWidget> {
   @override
   void initState() {
     super.initState();
-    cardPath = getRandomCardPath();
+  }
+
+  @override
+  void didChangeDependencies() {
+    final settingsProvider = context.watch<SettingsProvider>();
+    String res;
+    if(settingsProvider.isDarkMode){
+      res = 'assets/images/DarkCards/';
+    } else{
+      res = 'assets/images/LightCards/';
+    }
+    cardPath = getRandomCardPath(res);
+    super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
+
+    
+
     return Selector<GameProvider, ({CardState state, int? selectedRow, bool isPlayerTurn})>(
       selector: (_, gameProvider) => gameProvider.cardInfo(widget.rowIdx, widget.colIdx), // multi selection
       builder: (context, cardInfo, child) {

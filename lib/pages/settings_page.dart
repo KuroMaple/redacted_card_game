@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:redacted_card_game/data/constants.dart';
+import 'package:redacted_card_game/providers/game_provider.dart';
 import 'package:redacted_card_game/providers/settings_provider.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -11,7 +12,7 @@ class SettingsPage extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('How to Play REDACTED'),
+          title: const Text('How to play REDACTED'),
           content: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -27,17 +28,6 @@ class SettingsPage extends StatelessWidget {
                   '• You can remove any number of cards, but only from ONE row per turn\n'
                   '• The player who takes the LAST card loses the game\n'
                   '• Try to force your opponent into taking the final card',
-                  style: TextStyle(fontSize: 14),
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  'Strategy Tips:',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  '• Plan ahead and think about the board state\n'
-                  '• Try to leave an even number of single cards\n',
                   style: TextStyle(fontSize: 14),
                 ),
               ],
@@ -96,6 +86,11 @@ class SettingsPage extends StatelessWidget {
                     onChanged: (Difficulty? value) {
                       if (value != null) {
                         settings.setDifficulty(value);
+
+                        // Update Games Provider for next game before restart of app
+                        if(value == Difficulty.impossible){
+                          context.read<GameProvider>().changeTurn();
+                        }
                       }
                     },
                   ),
@@ -126,33 +121,33 @@ class SettingsPage extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 12),
+              // const SizedBox(height: 12),
 
-              // Sound Setting
-              Card(
-                elevation: 2,
-                child: ListTile(
-                  leading: Icon(
-                    settings.isSoundEnabled
-                        ? Icons.volume_up
-                        : Icons.volume_off,
-                    size: 32,
-                  ),
-                  title: const Text(
-                    'Sound',
-                    style: KTextStyle.settingsTitleText,
-                  ),
-                  subtitle: Text(
-                    settings.isSoundEnabled ? 'Enabled' : 'Disabled',
-                    style: KTextStyle.settingsSubtitleText,
-                  ),
-                  trailing: Switch(
-                    value: settings.isSoundEnabled,
-                    onChanged: (_) => settings.toggleSound(),
-                    activeTrackColor: Colors.lightGreenAccent.withOpacity(0.5),
-                  ),
-                ),
-              ),
+              // // Sound Setting
+              // Card(
+              //   elevation: 2,
+              //   child: ListTile(
+              //     leading: Icon(
+              //       settings.isSoundEnabled
+              //           ? Icons.volume_up
+              //           : Icons.volume_off,
+              //       size: 32,
+              //     ),
+              //     title: const Text(
+              //       'Sound',
+              //       style: KTextStyle.settingsTitleText,
+              //     ),
+              //     subtitle: Text(
+              //       settings.isSoundEnabled ? 'Enabled' : 'Disabled',
+              //       style: KTextStyle.settingsSubtitleText,
+              //     ),
+              //     trailing: Switch(
+              //       value: settings.isSoundEnabled,
+              //       onChanged: (_) => settings.toggleSound(),
+              //       activeTrackColor: Colors.lightGreenAccent.withOpacity(0.5),
+              //     ),
+              //   ),
+              // ),
               const SizedBox(height: 24),
 
               // Instructions Button

@@ -42,7 +42,10 @@ class GameProvider extends ChangeNotifier {
 
   bool get isGameOver => _gameOver;
 
+  int? get selectedRow => _selectedRow;
+
   List<List<CardState>> get gameState => _gameState;
+
 
   ({CardState state, int? selectedRow, bool isPlayerTurn}) cardInfo(int rowIdx, int colIdx) =>
       (state: _gameState[rowIdx][colIdx], selectedRow: _selectedRow, isPlayerTurn: _isPlayerTurn);
@@ -63,6 +66,22 @@ class GameProvider extends ChangeNotifier {
     }
 
     return removedCards == (totalCards - 1);
+  }
+
+    /// returns true if there is only one card left 
+  bool isNoCardsLeft(){
+    int removedCards = 0;
+    int totalCards = 0; // count cards in play at runtime for future dynamic changes
+    for(int i = 0; i < _gameState.length; ++i){
+      for(int j = 0; j < _gameState[i].length; ++j){
+        totalCards++;
+        if(_gameState[i][j] == CardState.removed){
+          removedCards++;
+        }
+      }
+    }
+
+    return removedCards == totalCards;
   }
 
   /// Calculate the count of untouched cards in a given row
@@ -140,7 +159,6 @@ class GameProvider extends ChangeNotifier {
   void endPlayerTurn() {
 
     if(_selectedRow == null){
-      //TODO: Error message here
       return;
     }
 
@@ -153,6 +171,12 @@ class GameProvider extends ChangeNotifier {
 
     _selectedRow = null;
 
+    // Check to see if silly little player removed all the cards including the last card
+    if(isNoCardsLeft()){
+      _gameOver = true;
+      notifyListeners();
+      return;
+    }
     changeTurn(); 
     playCPUTurn();
 
@@ -189,6 +213,7 @@ class GameProvider extends ChangeNotifier {
       _selectedRow = null;
     }
 
+    print("Selected row is $_selectedRow");
     notifyListeners();
   }
 
