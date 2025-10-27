@@ -20,7 +20,8 @@ This project was built to demonstrate practical game development skills using Fl
 
 
 ## Demo Video
-<video src="./README-Assets/redacted-demo.mp4" width="320" height="240" controls></video>
+[![Watch the demo](https://i.imgur.com/waunQCi.png)](https://youtu.be/CMffTwUznfw)
+
 
 
 
