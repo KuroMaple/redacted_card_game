@@ -20,7 +20,7 @@ This project was built to demonstrate practical game development skills using Fl
 
 
 ## Demo Video (click to YouTube)
-[![Watch the demo](https://i.imgur.com/waunQCi.png)](https://youtu.be/CMffTwUznfw)
+[![Watch the demo](https://i.imgur.com/waunQCi.png)](https://www.youtube.com/watch?v=oheHCCOAQho)
 
 
 
