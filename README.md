@@ -19,7 +19,8 @@ This project was built to demonstrate practical game development skills using Fl
 - Cross-platform compatibility (mobile + desktop)
 
 
-
+## Demo Video
+<video src="./README-Assets/redacted-demo.mp4" width="320" height="240" controls fullscreen></video>
 
 
 
