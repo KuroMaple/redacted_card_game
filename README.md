@@ -19,7 +19,7 @@ This project was built to demonstrate practical game development skills using Fl
 - Cross-platform compatibility (mobile + desktop)
 
 
-## Demo Video
+## Demo Video (click to YouTube)
 [![Watch the demo](https://i.imgur.com/waunQCi.png)](https://youtu.be/CMffTwUznfw)
 
 
